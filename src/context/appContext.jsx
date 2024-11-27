@@ -17,6 +17,7 @@ const AppContextProvider = ({ children }) => {
   const [unviewedMessageCount, setUnviewedMessageCount] = useState(0);
   const [countryCode, setCountryCode] = useState("");
   const [isInitialLoad, setIsInitialLoad] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null); // P1cf1
 
   useEffect(() => {
     // Effect to scroll to bottom on initial message load
@@ -191,6 +192,17 @@ const AppContextProvider = ({ children }) => {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   };
 
+  const authenticateUser = (username, password) => { // P6eae
+    if (
+      (username === "M" && password === "M143") ||
+      (username === "J" && password === "J143")
+    ) {
+      setLoggedInUser(username);
+      return true;
+    }
+    return false;
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -209,6 +221,9 @@ const AppContextProvider = ({ children }) => {
         country: countryCode,
         unviewedMessageCount,
         session,
+        loggedInUser, // P5aaa
+        setLoggedInUser, // P5aaa
+        authenticateUser, // P5aaa
       }}
     >
       {children}

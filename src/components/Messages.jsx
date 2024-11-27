@@ -3,7 +3,7 @@ import { useAppContext } from "../context/appContext";
 import Message from "./Message";
 
 export default function Messages() {
-  const { username, loadingInitial, error, getMessagesAndSubscribe, messages } =
+  const { username, loadingInitial, error, getMessagesAndSubscribe, messages, loggedInUser } =
     useAppContext();
   const reversed = [...messages].reverse();
   if (loadingInitial)
@@ -34,8 +34,10 @@ export default function Messages() {
       </Box>
     );
 
-  return reversed.map((message) => {
-    const isYou = message.username === username;
-    return <Message key={message.id} message={message} isYou={isYou} />;
-  });
+  return reversed
+    .filter((message) => message.username === loggedInUser)
+    .map((message) => {
+      const isYou = message.username === username;
+      return <Message key={message.id} message={message} isYou={isYou} />;
+    });
 }

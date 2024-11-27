@@ -12,7 +12,7 @@ import { useAppContext } from "../context/appContext";
 import supabase from "../supabaseClient";
 
 export default function MessageForm() {
-  const { username, country, session } = useAppContext();
+  const { username, country, session, loggedInUser } = useAppContext();
   const [message, setMessage] = useState("");
   const toast = useToast();
   const [isSending, setIsSending] = useState(false);
@@ -28,7 +28,7 @@ export default function MessageForm() {
       const { error } = await supabase.from("messages").insert([
         {
           text: message,
-          username,
+          username: loggedInUser,
           country,
           is_authenticated: session ? true : false,
         },

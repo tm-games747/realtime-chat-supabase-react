@@ -1,11 +1,11 @@
 import { ChakraProvider, Box, theme } from "@chakra-ui/react";
-// import { ColorModeSwitcher } from "./components/ColorModeSwitcher";
 import "./App.css";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import Chat from "./components/Chat";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppContextProvider, useAppContext } from "./context/appContext";
+import Login from "./components/Login";
 
 function App() {
   const { username, setUsername, routeHash } = useAppContext();
@@ -28,7 +28,6 @@ function App() {
     <ChakraProvider theme={theme}>
       <AppContextProvider>
         <Box bg="gray.100">
-          {/* <ColorModeSwitcher justifySelf="flex-end" /> */}
           <Router>
             <Routes>
               <Route
@@ -41,6 +40,7 @@ function App() {
                   </>
                 }
               />
+              <Route path="/login" element={<Login />} />
               <Route path="*" element={<p>Not found</p>} />
             </Routes>
           </Router>

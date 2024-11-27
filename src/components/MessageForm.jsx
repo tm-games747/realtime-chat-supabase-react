@@ -6,6 +6,7 @@ import {
   useToast,
   Box,
   Container,
+  Button,
 } from "@chakra-ui/react";
 import { BiSend } from "react-icons/bi";
 import { useAppContext } from "../context/appContext";
@@ -16,21 +17,37 @@ export default function MessageForm() {
   const [message, setMessage] = useState("");
   const toast = useToast();
   const [isSending, setIsSending] = useState(false);
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSending(true);
-    if (!message) return;
+    if (!message && !file) return;
 
     setMessage("");
+    setFile(null);
 
     try {
+      let fileUrl = null;
+      if (file) {
+        const { data, error: uploadError } = await supabase.storage
+          .from("chat-files")
+          .upload(`public/${file.name}`, file);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        fileUrl = data.Key;
+      }
+
       const { error } = await supabase.from("messages").insert([
         {
           text: message,
           username: loggedInUser,
           country,
           is_authenticated: session ? true : false,
+          file_url: fileUrl,
         },
       ]);
 
@@ -45,7 +62,7 @@ export default function MessageForm() {
         });
         return;
       }
-      console.log("Sucsessfully sent!");
+      console.log("Successfully sent!");
     } catch (error) {
       console.log("error sending message:", error);
     } finally {
@@ -68,14 +85,19 @@ export default function MessageForm() {
               autoFocus
               maxLength="500"
             />
+            <Input
+              type="file"
+              onChange={(e) => setFile(e.target.files[0])}
+              bg="white"
+              border="none"
+            />
             <IconButton
-              // variant="outline"
               colorScheme="teal"
               aria-label="Send"
               fontSize="20px"
               icon={<BiSend />}
               type="submit"
-              disabled={!message}
+              disabled={!message && !file}
               isLoading={isSending}
             />
           </Stack>
